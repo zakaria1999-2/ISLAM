@@ -1,0 +1,8 @@
+# ملفات تطوير واختبار محلية
+.verify/
+node_modules/
+*.log
+
+# نظام التشغيل
+Thumbs.db
+.DS_Store
