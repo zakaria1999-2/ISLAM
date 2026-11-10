@@ -30,8 +30,13 @@
           .replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/\/+$/, '').toLowerCase();
       }
       var path = loose(location.pathname);
+      var current = decodeURI(location.pathname).replace(/\/+$/, '') || '/';
       for (var i = 0; i < routes.length; i++) {
-        if (loose(routes[i][0]) === path) { location.replace(routes[i][1]); return; }
+        // إعادة التوجيه فقط عند اختلاف فعلي (مثل همزة/تاء مربوطة) — يمنع حلقة 404
+        if (loose(routes[i][0]) === path && routes[i][1] !== current) {
+          location.replace(routes[i][1]);
+          return;
+        }
       }
     })();
   </script>
