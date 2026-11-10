@@ -106,40 +106,40 @@
       description: 'موقع نور الإسلامي: مواقيت الصلاة بدقة فلكية، القرآن الكريم بالرسم العثماني مع الترجمة والتفسير، الأذكار اليومية، المسبحة الرقمية، أسماء الله الحسنى، واتجاه القبلة.'
     },
     prayer: {
-      path: '/اوقات-الصلاة',
+      path: '/prayer-times',
       title: 'مواقيت الصلاة اليوم | نور',
       description: 'مواقيت الصلاة اليوم بدقة فلكية حسب مدينتك وطريقة الحساب المعتمدة، مع عدّاد للصلاة القادمة والتاريخ الهجري.'
     },
     quran: {
-      path: '/القرآن-الكريم',
+      path: '/quran',
       title: 'القرآن الكريم بالرسم العثماني مع التفسير | نور',
       description: 'اقرأ القرآن الكريم كاملًا بالرسم العثماني، مع ترجمة إنجليزية معتمدة وتفسير الميسر وابن كثير، وتصفّح حسب الأجزاء والأحزاب وصفحات المصحف.',
       titleEn: 'The Holy Quran with Translation and Tafsir | Noor',
       descriptionEn: 'Read the Holy Quran in Uthmani script with an authentic English translation and trusted tafsir (Ibn Kathir), browsable by juz, hizb and mushaf page.'
     },
     azkar: {
-      path: '/الأذكار-اليومية',
+      path: '/azkar',
       title: 'الأذكار اليومية: الصباح والمساء والنوم | نور',
       description: 'أذكار الصباح والمساء والنوم وأدعية اليوم مع عدّاد لكل ذكر وحفظ تلقائي للتقدّم.'
     },
     tasbih: {
-      path: '/المسبحة-الرقمية',
+      path: '/tasbih',
       title: 'المسبحة الرقمية للتسبيح | نور',
       description: 'سبّح إلكترونيًا بأهداف 33 و99 و100 و1000، مع حفظ إجمالي أذكار اليوم والإجمالي الكلي.'
     },
     names: {
-      path: '/أسماء-الله-الحسنى',
+      path: '/names-of-allah',
       title: 'أسماء الله الحسنى التسعة والتسعون مع معانيها | نور',
       description: 'تسعة وتسعون اسمًا من أسماء الله الحسنى مع شرح موجز لكل اسم، وبحث فوري ونسخ بضغطة.'
     },
     qibla: {
-      path: '/اتجاه-القبلة',
+      path: '/qibla',
       title: 'اتجاه القبلة: بوصلة دقيقة مع وضع الكاميرا | نور',
       description: 'اعرف اتجاه القبلة بدقة من موقعك: زاوية من الشمال الحقيقي مع تصحيح الانحراف المغناطيسي (NOAA WMM)، بوصلة حيّة، ووضع كاميرا AR بسهم محاذاة.'
     }
   };
 
-  const SITE_URL = (window.NOOR_ROUTES && window.NOOR_ROUTES.siteUrl) || 'https://noor-islamic.vercel.app';
+  const SITE_URL = (window.NOOR_ROUTES && window.NOOR_ROUTES.siteUrl) || 'https://noorislam.xyz';
 
   function loosePath(value) {
     return decodeURI(String(value || '/'))

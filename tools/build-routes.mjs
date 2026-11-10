@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PAGES, SITE, DEFAULT_SITE_URL, absoluteUrl } from './routes.mjs';
+import { PAGES, SITE, DEFAULT_SITE_URL, absoluteUrl, legacyFile } from './routes.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TEMPLATE = join(ROOT, 'index.html');
@@ -184,7 +184,10 @@ function write404() {
     .map((page) => `        <a href="${esc(page.path)}">${esc(page.nav)}</a>`)
     .join('\n');
 
-  const map = JSON.stringify(PAGES.map((page) => [page.path, page.path]));
+  const map = JSON.stringify([
+    ...PAGES.map((page) => [page.path, page.path]),
+    ...PAGES.filter((page) => page.legacy).map((page) => [page.legacy, page.path])
+  ]);
 
   const html = `<!DOCTYPE html>
 <html lang="ar" dir="rtl" data-theme="dark">
@@ -230,6 +233,35 @@ ${links}
   writeFileSync(join(OUT, '404.html'), html, 'utf8');
 }
 
+/** صفحة تحويل من المسار العربي القديم إلى المسار الإنجليزي الجديد */
+function writeLegacyRedirect(page) {
+  const file = legacyFile(page);
+  if (!file) return;
+
+  const url = absoluteUrl(SITE_URL, page.path);
+  const html = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${esc(page.title)}</title>
+  <link rel="canonical" href="${esc(url)}">
+  <meta name="robots" content="noindex, follow">
+  <meta http-equiv="refresh" content="0;url=${esc(page.path)}">
+  <script>location.replace(${JSON.stringify(page.path)});</script>
+</head>
+<body>
+  <p style="font-family:Tahoma,sans-serif;text-align:center;padding:40px">
+    تم نقل الصفحة إلى <a href="${esc(page.path)}">${esc(page.path)}</a>
+  </p>
+</body>
+</html>
+`;
+
+  writeFileSync(join(OUT, file), html, 'utf8');
+  console.log(`↪ ${file}  → ${page.path}`);
+}
+
 function main() {
   const template = readFileSync(TEMPLATE, 'utf8');
 
@@ -244,6 +276,7 @@ function main() {
     const html = renderRoute(template, page);
     writeFileSync(join(OUT, page.file), html, 'utf8');
     console.log(`✓ ${page.file}  (${page.path})`);
+    writeLegacyRedirect(page);
   }
 
   writeClientRoutes();
