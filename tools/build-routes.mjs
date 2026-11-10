@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PAGES, SITE, DEFAULT_SITE_URL, absoluteUrl, legacyFile } from './routes.mjs';
+import { PAGES, SITE, DEFAULT_SITE_URL, absoluteUrl } from './routes.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TEMPLATE = join(ROOT, 'index.html');
@@ -186,7 +186,7 @@ function write404() {
 
   const map = JSON.stringify([
     ...PAGES.map((page) => [page.path, page.path]),
-    ...PAGES.filter((page) => page.legacy).map((page) => [page.legacy, page.path])
+    ...PAGES.flatMap((page) => (page.legacy || []).map((path) => [path, page.path]))
   ]);
 
   const html = `<!DOCTYPE html>
@@ -233,13 +233,16 @@ ${links}
   writeFileSync(join(OUT, '404.html'), html, 'utf8');
 }
 
-/** صفحة تحويل من المسار العربي القديم إلى المسار الإنجليزي الجديد */
+/** صفحة تحويل من مسار قديم (عربي أو إنجليزي سابق) إلى المسار الجديد */
 function writeLegacyRedirect(page) {
-  const file = legacyFile(page);
-  if (!file) return;
+  const legacyPaths = page.legacy || [];
+  if (!legacyPaths.length) return;
 
   const url = absoluteUrl(SITE_URL, page.path);
-  const html = `<!DOCTYPE html>
+
+  for (const legacyPath of legacyPaths) {
+    const file = `${legacyPath.slice(1)}.html`;
+    const html = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -258,8 +261,9 @@ function writeLegacyRedirect(page) {
 </html>
 `;
 
-  writeFileSync(join(OUT, file), html, 'utf8');
-  console.log(`↪ ${file}  → ${page.path}`);
+    writeFileSync(join(OUT, file), html, 'utf8');
+    console.log(`↪ ${file}  → ${page.path}`);
+  }
 }
 
 function main() {

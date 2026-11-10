@@ -19,12 +19,12 @@
         <a href="/azkar">الأذكار اليومية</a>
         <a href="/tasbih">المسبحة الرقمية</a>
         <a href="/names-of-allah">أسماء الله الحسنى</a>
-        <a href="/qibla">اتجاه القبلة</a>
+        <a href="/qibla-finder">اتجاه القبلة</a>
     </nav>
   </main>
   <script>
     (function () {
-      var routes = [["/","/"],["/prayer-times","/prayer-times"],["/quran","/quran"],["/azkar","/azkar"],["/tasbih","/tasbih"],["/names-of-allah","/names-of-allah"],["/qibla","/qibla"],["/اوقات-الصلاة","/prayer-times"],["/القرآن-الكريم","/quran"],["/الأذكار-اليومية","/azkar"],["/المسبحة-الرقمية","/tasbih"],["/أسماء-الله-الحسنى","/names-of-allah"],["/اتجاه-القبلة","/qibla"]];
+      var routes = [["/","/"],["/prayer-times","/prayer-times"],["/quran","/quran"],["/azkar","/azkar"],["/tasbih","/tasbih"],["/names-of-allah","/names-of-allah"],["/qibla-finder","/qibla-finder"],["/اوقات-الصلاة","/prayer-times"],["/القرآن-الكريم","/quran"],["/الأذكار-اليومية","/azkar"],["/المسبحة-الرقمية","/tasbih"],["/أسماء-الله-الحسنى","/names-of-allah"],["/qibla","/qibla-finder"],["/اتجاه-القبلة","/qibla-finder"]];
       function loose(v) {
         return decodeURI(v).replace(/\/index\.html?$/i, '/').replace(/\.html?$/i, '')
           .replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/\/+$/, '').toLowerCase();

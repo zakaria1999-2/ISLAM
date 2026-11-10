@@ -64,7 +64,7 @@ islamic-site/
 | الأذكار اليومية | `/azkar` |
 | المسبحة الرقمية | `/tasbih` |
 | أسماء الله الحسنى | `/names-of-allah` |
-| اتجاه القبلة | `/qibla` |
+| اتجاه القبلة | `/qibla-finder` |
 
 - كل رابط صفحة مستقلة فعلية (ملف HTML) بعنوان `<title>` ووصف `meta description` و`canonical` و`JSON-LD` خاص بها — لا يعتمد على JavaScript للفهرسة.
 - التنقل داخل الموقع يستخدم `history.pushState` (بلا إعادة تحميل)، وإعادة تحميل أي رابط مباشرة تعمل دون 404.
