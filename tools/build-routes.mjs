@@ -134,6 +134,18 @@ ${urls}
 `;
 
   writeFileSync(join(OUT, 'sitemap.xml'), xml, 'utf8');
+
+  // فهرس خرائط بمسار بديل: يفيد عند تعليق حالة قديمة في Search Console
+  const index = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${esc(SITE_URL)}/sitemap.xml</loc>
+    <lastmod>${lastmod}</lastmod>
+  </sitemap>
+</sitemapindex>
+`;
+
+  writeFileSync(join(OUT, 'sitemap-index.xml'), index, 'utf8');
 }
 
 function writeRobots() {
@@ -142,6 +154,7 @@ Allow: /
 Disallow: /*?lang=en
 
 Sitemap: ${SITE_URL}/sitemap.xml
+Sitemap: ${SITE_URL}/sitemap-index.xml
 `;
   writeFileSync(join(OUT, 'robots.txt'), txt, 'utf8');
 }
