@@ -1,6 +1,6 @@
 /* مُولَّد آليًا من tools/routes.mjs — لا تعدّله يدويًا. */
 window.NOOR_ROUTES = {
-  "siteUrl": "https://noor-islamic.vercel.app",
+  "siteUrl": "https://noorislam.xyz",
   "pages": {
     "home": {
       "path": "/",

@@ -3,7 +3,7 @@
  * يُستخدم في: tools/build-routes.mjs (توليد الصفحات) و assets/js/routes.js (المتصفح).
  */
 
-export const DEFAULT_SITE_URL = 'https://noor-islamic.vercel.app';
+export const DEFAULT_SITE_URL = 'https://noorislam.xyz';
 
 export const SITE = {
   name: 'نور',
