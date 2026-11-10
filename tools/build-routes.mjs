@@ -146,6 +146,10 @@ ${urls}
 `;
 
   writeFileSync(join(OUT, 'sitemap-index.xml'), index, 'utf8');
+
+  // خريطة نصية (يدعمها Google) كخطة بديلة عند تعليق حالة XML
+  const txt = PAGES.map((page) => encodeURI(absoluteUrl(SITE_URL, page.path))).join('\n') + '\n';
+  writeFileSync(join(OUT, 'sitemap.txt'), txt, 'utf8');
 }
 
 function writeRobots() {
@@ -155,6 +159,7 @@ Disallow: /*?lang=en
 
 Sitemap: ${SITE_URL}/sitemap.xml
 Sitemap: ${SITE_URL}/sitemap-index.xml
+Sitemap: ${SITE_URL}/sitemap.txt
 `;
   writeFileSync(join(OUT, 'robots.txt'), txt, 'utf8');
 }

@@ -4,3 +4,4 @@ Disallow: /*?lang=en
 
 Sitemap: https://noorislam.xyz/sitemap.xml
 Sitemap: https://noorislam.xyz/sitemap-index.xml
+Sitemap: https://noorislam.xyz/sitemap.txt
