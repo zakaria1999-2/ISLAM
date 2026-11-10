@@ -88,8 +88,8 @@ npm start
 
 1. اربط المستودع بـ Vercel (Framework Preset: **Other**).
 2. الإعدادات مأخوذة من `vercel.json` تلقائيًا: `buildCommand` = `node tools/build-routes.mjs`، والمخرج `dist`، و`cleanUrls` مفعّل.
-3. على Vercel يُستعمل نطاق المشروع تلقائيًا في `canonical` و`sitemap.xml` (عبر `VERCEL_PROJECT_PRODUCTION_URL`).
-4. إن أردت نطاقًا مخصصًا: أضفه في Vercel، أو اضبط `SITE_URL` يدويًا ثم `npm run build`.
+3. النطاق الرسمي معرّف في `tools/routes.mjs` (`DEFAULT_SITE_URL = https://noorislam.xyz`) ويُستخدم في `canonical` و`sitemap.xml`.
+4. لتغيير النطاق: عدّل `DEFAULT_SITE_URL` ثم `npm run build`، أو اضبط متغيّر البيئة `SITE_URL` في Vercel (له الأولوية) وأعد النشر.
 
 > الروابط العربية (Unicode) مدعومة: أسماء الملفات UTF-8، وVercel يفك ترميز المسار ويطابق الملف مباشرة، مع `cleanUrls` لإخفاء `.html`.
 

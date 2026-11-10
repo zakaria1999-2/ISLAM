@@ -16,10 +16,10 @@ const TEMPLATE = join(ROOT, 'index.html');
 const OUT = process.env.VERCEL ? join(ROOT, 'dist') : ROOT;
 
 function resolveSiteUrl() {
-  const raw = process.env.SITE_URL
-    || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '')
-    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
-    || DEFAULT_SITE_URL;
+  // النطاق الرسمي المُعتمد في tools/routes.mjs هو الأساس دائمًا،
+  // ولا يُستبدل بنطاق النشر (*.vercel.app) إلا إذا كان الافتراضي فارغًا.
+  const raw = process.env.SITE_URL || DEFAULT_SITE_URL
+    || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '');
 
   return raw.replace(/\/+$/, '');
 }
