@@ -2164,3 +2164,42 @@ body.ar-open { overflow: hidden; }
   .ar-arrow { width: 96px; height: 122px; }
   .ar-hud b { font-size: 34px; }
 }
+
+/* ============================================================
+   روابط الأقسام (SEO): تحويل الأزرار إلى روابط حقيقية
+   ============================================================ */
+
+a.nav-link { display: inline-flex; align-items: center; }
+a.door { display: flex; }
+a.btn,
+a.link-btn { text-decoration: none; }
+.door:focus-visible,
+.nav-link:focus-visible,
+.footer-links a:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.footer-links {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 12.5px;
+}
+
+.footer-links a {
+  color: var(--muted);
+  font-weight: 700;
+  transition: color 0.18s ease;
+}
+
+.footer-links a:hover { color: var(--gold); }
+
+@media (max-width: 620px) {
+  .footer-links { gap: 6px 14px; font-size: 12px; }
+}

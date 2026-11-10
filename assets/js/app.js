@@ -78,6 +78,8 @@
     quranView: null,
     quranRequest: 0,
     surahIndexLoaded: false,
+    urlSurah: null,
+    urlPage: null,
     azkarCat: 'morning',
     azkarDone: { day: todayKey(), data: {} },
     dhikrIndex: 0,
@@ -95,26 +97,74 @@
   };
 
   const els = {};
-  const PAGES = ['home', 'prayer', 'quran', 'azkar', 'tasbih', 'names', 'qibla'];
-  const TITLES = {
-    home: 'نور | موقع إسلامي جامع',
-    prayer: 'مواقيت الصلاة | نور',
-    quran: 'القرآن الكريم | نور',
-    azkar: 'الأذكار اليومية | نور',
-    tasbih: 'المسبحة الرقمية | نور',
-    names: 'أسماء الله الحسنى | نور',
-    qibla: 'اتجاه القبلة | نور'
+
+  /* ---------- المسارات العربية (SEO) ---------- */
+  const ROUTE_PAGES = (window.NOOR_ROUTES && window.NOOR_ROUTES.pages) ? window.NOOR_ROUTES.pages : {
+    home: {
+      path: '/',
+      title: 'نور | مواقيت الصلاة والقرآن الكريم والأذكار',
+      description: 'موقع نور الإسلامي: مواقيت الصلاة بدقة فلكية، القرآن الكريم بالرسم العثماني مع الترجمة والتفسير، الأذكار اليومية، المسبحة الرقمية، أسماء الله الحسنى، واتجاه القبلة.'
+    },
+    prayer: {
+      path: '/اوقات-الصلاة',
+      title: 'مواقيت الصلاة اليوم | نور',
+      description: 'مواقيت الصلاة اليوم بدقة فلكية حسب مدينتك وطريقة الحساب المعتمدة، مع عدّاد للصلاة القادمة والتاريخ الهجري.'
+    },
+    quran: {
+      path: '/القرآن-الكريم',
+      title: 'القرآن الكريم بالرسم العثماني مع التفسير | نور',
+      description: 'اقرأ القرآن الكريم كاملًا بالرسم العثماني، مع ترجمة إنجليزية معتمدة وتفسير الميسر وابن كثير، وتصفّح حسب الأجزاء والأحزاب وصفحات المصحف.',
+      titleEn: 'The Holy Quran with Translation and Tafsir | Noor',
+      descriptionEn: 'Read the Holy Quran in Uthmani script with an authentic English translation and trusted tafsir (Ibn Kathir), browsable by juz, hizb and mushaf page.'
+    },
+    azkar: {
+      path: '/الأذكار-اليومية',
+      title: 'الأذكار اليومية: الصباح والمساء والنوم | نور',
+      description: 'أذكار الصباح والمساء والنوم وأدعية اليوم مع عدّاد لكل ذكر وحفظ تلقائي للتقدّم.'
+    },
+    tasbih: {
+      path: '/المسبحة-الرقمية',
+      title: 'المسبحة الرقمية للتسبيح | نور',
+      description: 'سبّح إلكترونيًا بأهداف 33 و99 و100 و1000، مع حفظ إجمالي أذكار اليوم والإجمالي الكلي.'
+    },
+    names: {
+      path: '/أسماء-الله-الحسنى',
+      title: 'أسماء الله الحسنى التسعة والتسعون مع معانيها | نور',
+      description: 'تسعة وتسعون اسمًا من أسماء الله الحسنى مع شرح موجز لكل اسم، وبحث فوري ونسخ بضغطة.'
+    },
+    qibla: {
+      path: '/اتجاه-القبلة',
+      title: 'اتجاه القبلة: بوصلة دقيقة مع وضع الكاميرا | نور',
+      description: 'اعرف اتجاه القبلة بدقة من موقعك: زاوية من الشمال الحقيقي مع تصحيح الانحراف المغناطيسي (NOAA WMM)، بوصلة حيّة، ووضع كاميرا AR بسهم محاذاة.'
+    }
   };
 
-  const TITLES_EN = {
-    home: 'Noor | Islamic Companion',
-    prayer: 'Prayer Times | Noor',
-    quran: 'The Holy Quran | Noor',
-    azkar: 'Daily Adhkar | Noor',
-    tasbih: 'Digital Tasbih | Noor',
-    names: 'Names of Allah | Noor',
-    qibla: 'Qibla Direction | Noor'
-  };
+  const SITE_URL = (window.NOOR_ROUTES && window.NOOR_ROUTES.siteUrl) || 'https://noor-islamic.vercel.app';
+
+  function loosePath(value) {
+    return decodeURI(String(value || '/'))
+      .replace(/\/index\.html?$/i, '/')
+      .replace(/\.html?$/i, '')
+      .replace(/[أإآٱ]/g, 'ا')
+      .replace(/ى/g, 'ي')
+      .replace(/ة/g, 'ه')
+      .replace(/[\u064B-\u0652\u0640]/g, '')
+      .replace(/\/+$/, '')
+      .toLowerCase();
+  }
+
+  function pageFromPath() {
+    const current = loosePath(location.pathname);
+    const keys = Object.keys(ROUTE_PAGES);
+    for (const key of keys) {
+      if (loosePath(ROUTE_PAGES[key].path) === current) return key;
+    }
+    return null;
+  }
+
+  function pathFor(page) {
+    return (ROUTE_PAGES[page] || ROUTE_PAGES.home).path;
+  }
 
   const METHOD_BY_COUNTRY = {
     'المغرب': 'morocco',
@@ -213,7 +263,7 @@
 
   /* ---------- التنقل ---------- */
   function go(page, opts = {}) {
-    if (!PAGES.includes(page)) page = 'home';
+    if (!ROUTE_PAGES[page]) page = 'home';
     state.page = page;
 
     els.pages.forEach((section) => {
@@ -235,11 +285,18 @@
       }
     });
 
-    document.title = state.lang === 'en'
-      ? (TITLES_EN[page] || TITLES[page])
-      : (TITLES[page] || TITLES_EN[page]);
+    updateSeo(page);
 
-    syncUrl();
+    if (!opts.skipUrl) {
+      const url = buildUrl(page);
+      const current = `${location.pathname}${location.search}`;
+      if (url !== current) {
+        try {
+          if (opts.replace) history.replaceState({ page }, '', url);
+          else history.pushState({ page }, '', url);
+        } catch (e) { /* تجاهل */ }
+      }
+    }
 
     if (!opts.keepScroll) window.scrollTo({ top: 0, behavior: opts.instant ? 'auto' : 'auto' });
 
@@ -250,26 +307,85 @@
   }
 
   /* ---------- الرابط واللغة ---------- */
-  function syncUrl(patch = {}) {
-    const params = new URLSearchParams(location.search);
-    const apply = (key, value) => {
-      if (value === null || value === undefined || value === '') params.delete(key);
-      else params.set(key, String(value));
-    };
-
-    if ('lang' in patch) apply('lang', patch.lang);
-    if ('surah' in patch) apply('surah', patch.surah);
-    if ('page' in patch) apply('page', patch.page);
-
+  function buildUrl(page) {
+    const params = new URLSearchParams();
+    if (state.lang === 'en' && page === 'quran') params.set('lang', 'en');
+    if (page === 'quran') {
+      if (state.urlPage) params.set('page', String(state.urlPage));
+      else if (state.urlSurah) params.set('surah', String(state.urlSurah));
+    }
     const qs = params.toString();
-    const url = `${location.pathname}${qs ? `?${qs}` : ''}#${state.page}`;
-    if (`${location.pathname}${location.search}${location.hash}` !== url) {
-      try { history.replaceState(null, '', url); } catch (e) { /* تجاهل */ }
+    return `${pathFor(page)}${qs ? `?${qs}` : ''}`;
+  }
+
+  function syncUrl(patch = {}) {
+    if ('surah' in patch) {
+      state.urlSurah = patch.surah;
+      if (patch.surah) state.urlPage = null;
+    }
+    if ('page' in patch) {
+      state.urlPage = patch.page;
+      if (patch.page) state.urlSurah = null;
+    }
+
+    const url = buildUrl(state.page);
+    if (url !== `${location.pathname}${location.search}`) {
+      try { history.replaceState({ page: state.page }, '', url); } catch (e) { /* تجاهل */ }
+    }
+  }
+
+  function setMetaContent(selector, value) {
+    const el = document.querySelector(selector);
+    if (el && value) el.setAttribute('content', value);
+  }
+
+  function updateSeo(page) {
+    const meta = ROUTE_PAGES[page] || ROUTE_PAGES.home;
+    const english = state.lang === 'en' && page === 'quran';
+    const title = english && meta.titleEn ? meta.titleEn : meta.title;
+    const description = english && meta.descriptionEn ? meta.descriptionEn : meta.description;
+    const canonical = `${location.origin}${pathFor(page)}`;
+
+    document.title = title;
+    setMetaContent('meta[name="description"]', description);
+    setMetaContent('meta[property="og:title"]', title);
+    setMetaContent('meta[property="og:description"]', description);
+    setMetaContent('meta[property="og:url"]', canonical);
+    setMetaContent('meta[name="twitter:title"]', title);
+    setMetaContent('meta[name="twitter:description"]', description);
+
+    let link = document.querySelector('link[rel="canonical"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      document.head.append(link);
+    }
+    link.setAttribute('href', canonical);
+
+    const robots = document.querySelector('meta[name="robots"]');
+    if (robots) {
+      robots.setAttribute('content', english ? 'noindex, follow' : 'index, follow, max-image-preview:large');
+    }
+
+    document.documentElement.dataset.route = page;
+
+    const schema = document.getElementById('pageSchema');
+    if (schema) {
+      schema.textContent = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': page === 'home' ? 'WebSite' : 'WebPage',
+        name: title,
+        description,
+        url: canonical,
+        inLanguage: 'ar',
+        isPartOf: { '@type': 'WebSite', name: 'نور', url: `${location.origin}/` }
+      });
     }
   }
 
   function applyLang(lang, opts = {}) {
     state.lang = lang === 'en' ? 'en' : 'ar';
+    storage.set('lang', state.lang);
     document.documentElement.lang = 'ar';
 
     const quranPage = document.getElementById('page-quran');
@@ -295,14 +411,12 @@
       els.langToggle.setAttribute('aria-label', label);
     }
 
-    document.title = state.lang === 'en'
-      ? (TITLES_EN[state.page] || TITLES[state.page])
-      : TITLES[state.page];
+    updateSeo(state.page);
 
     renderIndex();
     if (state.quranView) renderQuranView(state.quranView);
     updateEnToggle();
-    if (!opts.silent) syncUrl({ lang: state.lang === 'en' ? 'en' : null });
+    if (!opts.silent) syncUrl();
   }
 
   function updateEnToggle() {
@@ -1076,7 +1190,7 @@
     state.quranPage = null;
     renderSurahList(els.surahSearch.value);
     els.surahList.scrollTop = listScroll;
-    syncUrl({ surah: n, page: null });
+    if (!opts.silentUrl) syncUrl({ surah: n, page: null });
     updateSurahSelection();
 
     if (!opts.force && state.surahCache.has(n)) {
@@ -1167,7 +1281,7 @@
     const page = Number(params.get('page'));
     if (page) return openPage(page);
     const surah = Number(params.get('surah'));
-    return selectSurah(surah || 1);
+    return selectSurah(surah || 1, { silentUrl: !surah });
   }
 
   function updateSurahSelection() {
@@ -1677,6 +1791,9 @@
   /* ---------- ربط الأحداث ---------- */
   function bindEvents() {
     document.addEventListener('click', (event) => {
+      if (event.defaultPrevented) return;
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
       const goto = event.target.closest('[data-goto]');
       if (goto) {
         event.preventDefault();
@@ -1694,9 +1811,9 @@
       applyTheme(state.theme === 'dark' ? 'light' : 'dark');
     });
 
-    window.addEventListener('hashchange', () => {
-      const page = location.hash.replace('#', '');
-      if (PAGES.includes(page) && page !== state.page) go(page);
+    window.addEventListener('popstate', () => {
+      const page = pageFromPath() || 'home';
+      if (page !== state.page) go(page, { skipUrl: true });
     });
 
     els.citySelect.addEventListener('change', () => {
@@ -1848,9 +1965,12 @@
   }
 
   /* ---------- بدء التشغيل ---------- */
-  function routeFromHash() {
-    const page = location.hash.replace('#', '');
-    go(PAGES.includes(page) ? page : 'home', { instant: true });
+  function initialRoute() {
+    const hash = location.hash.replace('#', '');
+    if (hash && ROUTE_PAGES[hash]) return { page: hash, legacy: true };
+    const fromPath = pageFromPath();
+    if (fromPath) return { page: fromPath, legacy: false };
+    return { page: 'home', legacy: location.pathname !== '/' };
   }
 
   function init() {
@@ -1858,7 +1978,14 @@
     applyTheme(state.theme);
 
     const params = new URLSearchParams(location.search);
-    applyLang(params.get('lang') === 'en' ? 'en' : 'ar', { silent: true });
+    const pageParam = Number(params.get('page'));
+    const surahParam = Number(params.get('surah'));
+    if (pageParam) state.urlPage = pageParam;
+    else if (surahParam) state.urlSurah = surahParam;
+
+    let initialLang = params.get('lang');
+    if (initialLang !== 'en' && initialLang !== 'ar') initialLang = storage.get('lang', 'ar');
+    applyLang(initialLang === 'en' ? 'en' : 'ar', { silent: true });
 
     initSelects();
     renderDates();
@@ -1875,7 +2002,10 @@
     initTasbih();
     bindEvents();
     updateEnToggle();
-    routeFromHash();
+
+    const start = initialRoute();
+    state.page = start.page;
+    go(start.page, { replace: true, instant: true });
 
     if (els.footerYear) els.footerYear.textContent = new Date().getFullYear();
 
