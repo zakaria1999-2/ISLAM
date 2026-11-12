@@ -6,9 +6,9 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [{ "type": "host", "value": "www.noorislam.xyz" }],
-      "destination": "https://noorislam.xyz/:path*",
+      "destination": "https://noorislam.xyz/$1",
       "permanent": true
     },
     { "source": "/qibla", "destination": "/qibla-finder", "permanent": true }
