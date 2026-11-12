@@ -4,6 +4,15 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.noorislam.xyz" }],
+      "destination": "https://noorislam.xyz/:path*",
+      "permanent": true
+    },
+    { "source": "/qibla", "destination": "/qibla-finder", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",

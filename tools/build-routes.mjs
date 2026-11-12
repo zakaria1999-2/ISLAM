@@ -285,7 +285,6 @@ function main() {
     const html = renderRoute(template, page);
     writeFileSync(join(OUT, page.file), html, 'utf8');
     console.log(`✓ ${page.file}  (${page.path})`);
-    writeLegacyRedirect(page);
   }
 
   writeClientRoutes();
